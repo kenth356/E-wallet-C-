@@ -9,11 +9,12 @@ bool bypass = true;
 void Registration();
 void Login();
 void Exit();
-void eventPlanner();
+void roles();
+void EWallet();
 int main() {
     bool bypass = true;
     while (true) {
-    cout << "[EVENT PLANNER IN DYCI]";
+    cout << "[E-WALLET IN DYCI]";
     cout << "\n1. Registration";
     cout << "\n2. Login";
     cout << "\n3. Exit";
@@ -63,7 +64,7 @@ return 0;
     
     if (Loginname == name && Loginpass == pass && Loginemail == email) {
         cout << "\n[LOGIN SUCCESSFUL]";
-        eventPlanner();
+        roles();
         break;
     } else {
         cout << "\n[INCORRECT OUTPUT]\n[PLEASE TRY AGAIN]";
@@ -72,9 +73,26 @@ return 0;
     }
 
     void Exit() {
-        cout << "\nTHANK YOU FOR USING OUR EVENT PLANNER!!";
+        cout << "\nTHANK YOU FOR USING MY INNOVATED E-WALLET!!";
     }
 
-    void eventPlanner() {
-        cout << "\n[WELCOME TO EVENT PLANNER IN DYCI]";
+    void roles() {
+        while (true) {
+        cout << "\n--ROLES MENU--";
+        cout << "\n1. Faculty";
+        cout << "\n2. Student";
+        cout << "\n3. Admin";
+        cout << "\n4. Choose a role";
+        cout << "\n5. Go Back";
+        cout << "\nEnter: ";
+        int choice;
+        cin >> choice;
+        cin.ignore();
+        switch (true) {
+            case 1:
+        }
+    }
+    }
+    void EWallet() {
+        cout << "\n[WELCOME TO DYCIAN E-WALLET]";
     }
