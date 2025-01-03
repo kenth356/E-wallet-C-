@@ -10,7 +10,14 @@ void Registration();
 void Login();
 void Exit();
 void roles();
+void AdminMENU();
+void roleSELECT();
 void EWallet();
+void cashIN();
+void sendMONE();
+void payREQS();
+void proMOS();
+void accENTER();
 int main() {
     bool bypass = true;
     while (true) {
@@ -90,9 +97,58 @@ return 0;
         cin.ignore();
         switch (true) {
             case 1:
+            EWallet();
+            break;
+            case 2:
+            EWallet();
+            break;
+            case 3:
+            AdminMENU();
+            break;
+            case 4:
+            roleSELECT();
+            break;
+            case 5:
+            return;
+            default:
+            cout << "\n[PLEASE ENTER A VALID INPUT]\n";
         }
     }
     }
+
     void EWallet() {
+        while (true) {
         cout << "\n[WELCOME TO DYCIAN E-WALLET]";
+        cout << "\n1. Cash-In";
+        cout << "\n2. Send Money";
+        cout << "\n3. Pay School Requisites";
+        cout << "\n4. Promos";
+        cout << "\n5. Account Center";
+        cout << "\n6. Go Back";
+        cout << "\nEnter: ";
+        int answer;
+        cin >> answer;
+        cin.ignore();
+        switch (true) {
+            case 1:
+            cashIN();
+            break;
+            case 2:
+            sendMONE();
+            break;
+            case 3:
+            payREQS();
+            break;
+            case 4:
+            proMOS();
+            break;
+            case 5:
+            accENTER();
+            break;
+            case 6:
+            return;
+            default:
+            cout << "\n[PLEASE ENTER A VALID INPUT]";
+        }
+    }
     }
