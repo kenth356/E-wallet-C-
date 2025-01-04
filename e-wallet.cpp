@@ -117,7 +117,7 @@ return 0;
         int choice;
         cin >> choice;
         cin.ignore();
-        switch (true) {
+        switch (choice) {
             case 1:
             EWallet();
             break;
@@ -148,7 +148,7 @@ return 0;
         int answer;
         cin >> answer;
         cin.ignore();
-        switch (true) {
+        switch (answer) {
             case 1:
             cashIN();
             break;
@@ -201,7 +201,7 @@ return 0;
         userDC *sender = nullptr, *recipient = nullptr;
         for (auto &user : usersD) {
             if (user.name == REGISname) sender = &user;
-            if (user.name == recipient) recipient = &user;
+            if (user.name == recipientNAME) recipient = &user;
         } if (!recipient) {
             cout << "\n[ERROR]\n RECIPIENT NOT FOUND";
             return;
@@ -227,7 +227,7 @@ return 0;
         cout << "\nEnter: ";
         cin >> answer;
         cin.ignore();
-        switch (true) {
+        switch (answer) {
             case 1:
             tuitionFEE();
             break;
@@ -358,7 +358,7 @@ return 0;
             cout << "\n[NO USER DATA FOUND]";
             return;
         } userDC user;
-        while (file >> user.name >> user.pass >> user.email >> user.balance >> user.tuitionFee >> user.tuitionFee >> user.misceFee >> user.eventPart) {
+        while (file >> user.name >> user.pass >> user.email >> user.balance >> user.tuitionFee >> user.misceFee >> user.eventPart) {
             usersD.push_back(user);
         } file.close();
     }
