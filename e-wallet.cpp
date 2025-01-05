@@ -9,9 +9,9 @@ struct userDC {
 string name, pass, email, std_info;
 string eventPTYPE;
 double balance;
-double tuitionFee;
-double misceFee;
-double eventPart;
+vector<double> tuitionFee;
+vector<double> misceFee;
+vector<double> eventPart;
 };
 
 vector<userDC> usersD;
@@ -20,6 +20,7 @@ vector<string> refundREA;
 string REGISname;
 double adminCODE = 2706;
 
+string adRESPO(string inquiry);
 void Registration();
 void SAVEDFILES();
 void LOADFILES();
@@ -292,7 +293,7 @@ return 0;
     }
 
     void noTIF() {
-
+        
     }
 
     void reFUND() {
@@ -311,7 +312,7 @@ return 0;
         for (auto &user : usersD) {
             if (user.name == REGISname) {
                 if (user.tuitionFee == 0) {
-                    cout << "\n[ERROR]\n";
+                    cout << "\n[THERE ARE NO TUITION DUE]\n";
                     return;
                 }
                 double tuitionPYT;
@@ -341,7 +342,7 @@ return 0;
         for (auto &user : usersD) {
             if (user.name == REGISname) {
                 if (user.misceFee == 0) {
-                    cout << "\n[ERROR]\n";
+                    cout << "\n[THERE ARE NO MISCELLANEOUS DUE]\n";
                     return;
                 }
                 double miscePYT;
@@ -359,7 +360,7 @@ return 0;
                     cout << "\n[PAYMENT SUCCESSFUL]";
                     cout << "\nAMOUNT PAID: " << miscePYT << " PHP";
                     cout << "\nREMAINING E-WALLET BALANCE: " << user.balance << " PHP";
-                    cout << "\n[ADMIN WILL SOON EMAIL UPDATED MISCELLANEOUS INFORMATION]";
+                    cout << "\n[ADMIN WILL SOON EMAIL UPDATED MISCELLANEOUS INFORMATION]\n";
                 } else {
                     cout << "\n[ERROR]\nDUE TO INSUFFIECIENT BALANCE\n";
                 } return;
@@ -371,7 +372,7 @@ return 0;
         for (auto &user : usersD) {
             if (user.name == REGISname) {
                 if (user.eventPart == 0) {
-                    cout << "\n[ERROR]\n";
+                    cout << "\n[THERE ARE NO EVENTS DUE]\n";
                     return;
                 }
                 double eventPYT;
@@ -388,7 +389,7 @@ return 0;
                     SAVEDFILES();
                     cout << "\n[PAYMENT SUCCESSFUL]";
                     cout << "\nAMOUNT PAID: " << eventPYT << " PHP";
-                    cout << "\nREMAINING E-WALLET BALANCE: " << user.balance << " PHP";
+                    cout << "\nREMAINING E-WALLET BALANCE: " << user.balance << " PHP\n";
                 } else {
                     cout << "\n[ERROR]\nDUE TO INSUFFIECIENT BALANCE\n";
                 } return;
@@ -420,6 +421,7 @@ return 0;
         cout << "\n2. Navigate Tuition Updates";
         cout << "\n3. Navigate Miscellaneous Updates";
         cout << "\n4. Navigate Event Payment Updates";
+        cout << "\n5. Log out";
         cout << "\nEnter: ";
         cin >> choice;
         cin.ignore();
@@ -435,6 +437,9 @@ return 0;
             break;
             case 4:
             eventADMIN();
+            break;
+            case 5:
+            roles();
             break;
             default:
             cout << "\n[PLEASE ENTER A VALID INPUT]\n";
@@ -463,6 +468,86 @@ return 0;
                 }
             } cout << "\n[ERROR]\n";
         }
+    }
+
+    void tuitionADMIN() {
+        double tuitionDUE;
+        cout << "\n[NAVIGATE TUITION UPDATES]\n";
+        cout << "\nEnter amount of tuition due: ";
+        cin >> tuitionDUE;
+        cin.ignore();
+        for (auto &user : usersD) {
+            if (user.name == REGISname) {
+                user.tuitionFee.push_back(tuitionDUE);
+                SAVEDFILES();
+                cout << "\nUPDATED TUITION DUE FOR: " << user.name << "\n";
+                return;
+            }
+        }
+    }
+
+    void misceADMIN() {
+        double misceDUE;
+        cout << "\n[NAVIGATE MISCELLANEOUS UPDATES]\n";
+        cout << "\nEnter amount of miscellaneous due: ";
+        cin >> misceDUE;
+        cin.ignore();
+        for (auto &user : usersD) {
+            if (user.name == REGISname) {
+                user.misceFee.push_back(misceDUE);
+                SAVEDFILES();
+                cout << "\nUPDATED MISCELLANEOUS DUE FOR: " << user.name << "\n";
+                return;
+            }
+        }
+    }
+
+    void eventADMIN() {
+        double eventDUE;
+        cout << "\n[NAVIGATE EVENTS UPDATES]";
+        cout << "\nEnter amount of events due: ";
+        cin >> eventDUE;
+        cin.ignore();
+        for (auto &user : usersD) {
+            if (user.name == REGISname) {
+                user.eventPart.push_back(eventDUE);
+                SAVEDFILES();
+                cout << "\nUPDATED EVENT DUE FOR: " << user.name << "\n";
+                return;
+            }
+        }
+    }
+
+    void inQUIRE() {
+        cout << "\n[INQUIRY]";
+        do {
+            cout << "\nEnter inquiry: ";
+            string inquiry;
+            getline(cin, inquiry);
+            string response = adRESPO(inquiry);
+            cout << "\nresponse: " << response << "\n";
+            cout << "\n[WOULD YOU LIKE TO SEND ANOTHER INQUIRY?]";
+            cout << "\nEnter: ";
+            string answer;
+            getline(cin, answer);
+            if (!(answer == "yes")) {
+                break;
+            }
+        } while (true);
+        cout << "\nGo Back?";
+        cout << "\nenter: ";
+        string answer2;
+        getline(cin, answer2);
+    }
+
+    string adRESPO(string inquiry) {
+        if (inquiry.find("creator") != string::npos || inquiry.find("program") != string::npos) {
+            return "Kenth Jarren S. Mariano, is the name of the creator of this program.";
+        } if (inquiry.find("purpose") != string::npos) {
+            return "This program was created for practice program of the creator";
+        } if (inquiry.find("updates") != string::npos) {
+            return "provide suggestions, then the creator will work on it :DD";
+        } return "\n[PLEASE EMAIL THE CREATOR FOR ENTERPRISE INQUIRIES]\nEMAIL OF THE CREATOR: kenthjarren2706@gmail.com\n";
     }
 
     void SAVEDFILES() {
