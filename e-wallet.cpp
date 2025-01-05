@@ -16,6 +16,7 @@ double eventPart;
 
 vector<userDC> usersD;
 string REGISname;
+double adminCODE = 2706;
 
 void Registration();
 void SAVEDFILES();
@@ -24,6 +25,7 @@ void Login();
 void Exit();
 void roles();
 void AdminMENU();
+void AdminLOGIN();
 void roleSELECT();
 void EWallet();
 void cashIN();
@@ -34,10 +36,12 @@ void accENTER();
 void tuitionFEE();
 void misceFEE();
 void eventPART();
+void reFUND();
+void inQUIRE();
+
 int main() {
-    LOADFILES();
     while (true) {
-    cout << "[E-WALLET IN DYCI]";
+    cout << "\n[E-WALLET IN DYCI]";
     cout << "\n1. Registration";
     cout << "\n2. Login";
     cout << "\n3. Exit";
@@ -77,7 +81,7 @@ return 0;
     newUSERS.tuitionFee = 0.0;
     usersD.push_back(newUSERS);
     SAVEDFILES();
-    cout << "\n[REGISTRATION SUCCESSFUL]";
+    cout << "\n[REGISTRATION SUCCESSFUL]\n";
     return;
 }
 
@@ -93,7 +97,7 @@ return 0;
     getline(cin, Loginemail);
     for (const auto &user : usersD) {
         if (user.name == Loginname && user.pass == Loginpass && user.email == Loginemail) {
-            cout << "\n[LOGIN SUCCESSFUL]";
+            cout << "\n[LOGIN SUCCESSFUL]\n";
             REGISname = user.name;
             roles();
             return;
@@ -125,7 +129,7 @@ return 0;
             EWallet();
             break;
             case 3:
-            AdminMENU();
+            AdminLOGIN();
             break;
             case 4:
             return;
@@ -143,7 +147,6 @@ return 0;
         cout << "\n3. Pay School Requisites";
         cout << "\n4. Current Balance";
         cout << "\n5. Account Center";
-        cout << "\n6. Go Back";
         cout << "\nEnter: ";
         int answer;
         cin >> answer;
@@ -164,10 +167,8 @@ return 0;
             case 5:
             accENTER();
             break;
-            case 6:
-            return;
             default:
-            cout << "\n[PLEASE ENTER A VALID INPUT]";
+            cout << "\n[PLEASE ENTER A VALID INPUT]\n";
         }
     }
     }
@@ -182,11 +183,11 @@ return 0;
             if (user.name == REGISname) {
                 user.balance += amountCASHIN;
                 SAVEDFILES();
-                cout << "\n[SUCCESSFUL]";
-                cout << "\nCURRENT BALANCE: " << user.balance;
+                cout << "\n[SUCCESSFUL]\n";
+                cout << "\nCURRENT BALANCE: " << user.balance << " PHP\n";
                 return;
             }
-        } cout << "\n[ERROR]";
+        } cout << "\n[ERROR]\n";
     }
 
     void sendMONE() {
@@ -203,15 +204,15 @@ return 0;
             if (user.name == REGISname) sender = &user;
             if (user.name == recipientNAME) recipient = &user;
         } if (!recipient) {
-            cout << "\n[ERROR]\n RECIPIENT NOT FOUND";
+            cout << "\n[ERROR]\n RECIPIENT NOT FOUND\n";
             return;
         } if (sender->balance < amountSEND) {
-            cout << "\n[ERROR]\n INSUFFICIENT BALANCE";
+            cout << "\n[ERROR]\n INSUFFICIENT BALANCE\n";
             return;
         } sender->balance -= amountSEND;
         recipient->balance += amountSEND;
         SAVEDFILES();
-        cout << "\n[TRANSFER SUCCESSFUL]";
+        cout << "\n[TRANSFER SUCCESSFUL]\n";
         return;
     }
 
@@ -238,7 +239,7 @@ return 0;
             eventPART();
             break;
             default:
-            cout << "\n[PLEASE ENTER A VALID INPUT]";
+            cout << "\n[PLEASE ENTER A VALID INPUT]\n";
         }
         }
     }
@@ -246,10 +247,40 @@ return 0;
     void curBA() {
         for (const auto &user : usersD) {
             if (user.name == REGISname) {
-                cout << "\nYOUR CURRENT BALANCE: " << user.balance;
+                cout << "\nYOUR CURRENT BALANCE: " << user.balance << " PHP";
                 return;
             }
         } cout << "\n[ERROR]\nUSER NOT FOUND";
+    }
+
+    void accENTER() {
+        int choice;
+        while (true) {
+        cout << "\n[ACCOUNT CENTER]";
+        cout << "\n1. Ask for Refunds";
+        cout << "\n2. Inquire";
+        cout << "\n3. Logout";
+        cout << "\nEnter: ";
+        cin >> choice;
+        cin.ignore();
+        switch (choice) {
+            case 1:
+            reFUND();
+            break;
+            case 2:
+            inQUIRE();
+            break;
+            case 3:
+            cout << "\n[LOGGING OUT]\n";
+            return;
+            default:
+            cout << "\n[PLEASE ENTER A VALID INPUT]\n";
+        }
+    }
+    }
+
+    void reFUND() {
+        cout << "\n[REFUND]";
     }
 
     void tuitionFEE() {
@@ -272,8 +303,8 @@ return 0;
                     user.tuitionFee -= tuitionPYT;
                     SAVEDFILES();
                     cout << "\n[PAYMENT SUCCESSFUL]";
-                    cout << "\nAMOUNT PAID: " << tuitionPYT;
-                    cout << "\nREMAINING E-WALLET BALANCE: " << user.balance;
+                    cout << "\nAMOUNT PAID: " << tuitionPYT << " PHP";
+                    cout << "\nREMAINING E-WALLET BALANCE: " << user.balance << " PHP";
                     cout << "\n[ADMIN WILL EMAIL YOUR NEW TUITION FEE INFORMATION]\n";
                 } else {
                     cout << "\n[ERROR]\nDUE TO INSUFFIECIENT BALANCE\n";
@@ -302,8 +333,8 @@ return 0;
                     user.misceFee -= miscePYT;
                     SAVEDFILES();
                     cout << "\n[PAYMENT SUCCESSFUL]";
-                    cout << "\nAMOUNT PAID: " << miscePYT;
-                    cout << "\nREMAINING E-WALLET BALANCE: " << user.balance;
+                    cout << "\nAMOUNT PAID: " << miscePYT << " PHP";
+                    cout << "\nREMAINING E-WALLET BALANCE: " << user.balance << " PHP";
                     cout << "\n[ADMIN WILL SOON EMAIL UPDATED MISCELLANEOUS INFORMATION]";
                 } else {
                     cout << "\n[ERROR]\nDUE TO INSUFFIECIENT BALANCE\n";
@@ -332,8 +363,8 @@ return 0;
                     user.eventPart -= eventPYT;
                     SAVEDFILES();
                     cout << "\n[PAYMENT SUCCESSFUL]";
-                    cout << "\nAMOUNT PAID: " << eventPYT;
-                    cout << "\nREMAINING E-WALLET BALANCE: " << user.balance;
+                    cout << "\nAMOUNT PAID: " << eventPYT << " PHP";
+                    cout << "\nREMAINING E-WALLET BALANCE: " << user.balance << " PHP";
                 } else {
                     cout << "\n[ERROR]\nDUE TO INSUFFIECIENT BALANCE\n";
                 } return;
@@ -341,24 +372,40 @@ return 0;
         } cout << "\n[ERROR]\nUSER NOT FOUND";
     }
 
+    void AdminLOGIN() {
+        while (true) {
+        double adminCODELOG;
+        cout << "\n[ADMIN LOGIN]";
+        cout << "\nENTER ADMIN USER CODE: ";
+        cin >> adminCODELOG;
+        cin.ignore();
+        if (adminCODELOG == adminCODE) {
+            AdminMENU();
+            break;
+        } else {
+            cout << "\n[INCORRECT OUTPUT]";
+            return;
+        }
+    }
+    }
+
+    void AdminMENU() {
+        cout << "\n[ADMIN MENU]";
+        cout << "\n";
+    }
+
     void SAVEDFILES() {
         ofstream file("users.txt");
-        if (!file.is_open()) {
-            cout << "\n[ERROR]";
-            return;
-        } for (const auto &user : usersD) {
-            file << user.name << " " << user.pass << " "
-            << user.email << " " << user.balance << " " << user.tuitionFee << user.misceFee << " " << user.eventPart << "\n";
+        for (const auto &user : usersD) {
+            file << "NAME: " << user.name << "\n" << "PASSWORD: " << user.pass << "\n" << "EMAIL: "
+            << user.email << "\n" << "ACADEMIC LEVEL/STRAND/COURSE: " << user.std_info << "\n" << "BALANCE: " << user.balance << "\n" << user.tuitionFee << "\n" << user.misceFee << "\n" << user.eventPart << "\n";
         } file.close();
     }
 
     void LOADFILES() {
         ifstream file("users.txt");
-        if (!file.is_open()) {
-            cout << "\n[NO USER DATA FOUND]";
-            return;
-        } userDC user;
-        while (file >> user.name >> user.pass >> user.email >> user.balance >> user.tuitionFee >> user.misceFee >> user.eventPart) {
+        userDC user;
+        while (file >> user.name >> user.pass >> user.email >> user.balance >> user.std_info >> user.tuitionFee >> user.misceFee >> user.eventPart) {
             usersD.push_back(user);
         } file.close();
     }
