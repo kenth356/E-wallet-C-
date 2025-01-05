@@ -15,6 +15,8 @@ double eventPart;
 };
 
 vector<userDC> usersD;
+vector<string> refundREQ;
+vector<string> refundREA;
 string REGISname;
 double adminCODE = 2706;
 
@@ -33,11 +35,16 @@ void sendMONE();
 void payREQS();
 void curBA();
 void accENTER();
+void noTIF();
 void tuitionFEE();
 void misceFEE();
 void eventPART();
 void reFUND();
 void inQUIRE();
+void refundADMIN();
+void tuitionADMIN();
+void misceADMIN();
+void eventADMIN();
 
 int main() {
     while (true) {
@@ -147,6 +154,7 @@ return 0;
         cout << "\n3. Pay School Requisites";
         cout << "\n4. Current Balance";
         cout << "\n5. Account Center";
+        cout << "\n6. Notifications";
         cout << "\nEnter: ";
         int answer;
         cin >> answer;
@@ -166,6 +174,9 @@ return 0;
             break;
             case 5:
             accENTER();
+            break;
+            case 6:
+            noTIF();
             break;
             default:
             cout << "\n[PLEASE ENTER A VALID INPUT]\n";
@@ -272,22 +283,35 @@ return 0;
             break;
             case 3:
             cout << "\n[LOGGING OUT]\n";
-            return;
+            roles();
+            break;
             default:
             cout << "\n[PLEASE ENTER A VALID INPUT]\n";
         }
     }
     }
 
+    void noTIF() {
+
+    }
+
     void reFUND() {
-        cout << "\n[REFUND]";
+        string REQ, REA;
+        cout << "\n[REQUEST A REFUND]";
+        cout << "\nType of Refund: ";
+        getline(cin, REQ);
+        refundREQ.push_back(REQ);
+        cout << "\nReason for refund: ";
+        getline(cin, REA);
+        refundREA.push_back(REA);
+        cout << "\n[REQUEST FOR REFUND SUCCESS]\nWAIT FOR FURTHER NOTICE\n";
     }
 
     void tuitionFEE() {
         for (auto &user : usersD) {
             if (user.name == REGISname) {
                 if (user.tuitionFee == 0) {
-                    cout << "\n[ERROR]";
+                    cout << "\n[ERROR]\n";
                     return;
                 }
                 double tuitionPYT;
@@ -317,7 +341,7 @@ return 0;
         for (auto &user : usersD) {
             if (user.name == REGISname) {
                 if (user.misceFee == 0) {
-                    cout << "\n[ERROR]";
+                    cout << "\n[ERROR]\n";
                     return;
                 }
                 double miscePYT;
@@ -347,7 +371,7 @@ return 0;
         for (auto &user : usersD) {
             if (user.name == REGISname) {
                 if (user.eventPart == 0) {
-                    cout << "\n[ERROR]";
+                    cout << "\n[ERROR]\n";
                     return;
                 }
                 double eventPYT;
@@ -383,15 +407,62 @@ return 0;
             AdminMENU();
             break;
         } else {
-            cout << "\n[INCORRECT OUTPUT]";
-            return;
+            cout << "\n[INCORRECT OUTPUT]\n";
         }
     }
     }
 
     void AdminMENU() {
+        int choice;
+        while (true) {
         cout << "\n[ADMIN MENU]";
-        cout << "\n";
+        cout << "\n1. Requests for refund";
+        cout << "\n2. Navigate Tuition Updates";
+        cout << "\n3. Navigate Miscellaneous Updates";
+        cout << "\n4. Navigate Event Payment Updates";
+        cout << "\nEnter: ";
+        cin >> choice;
+        cin.ignore();
+        switch (choice) {
+            case 1:
+            refundADMIN();
+            break;
+            case 2:
+            tuitionADMIN();
+            break;
+            case 3:
+            misceADMIN();
+            break;
+            case 4:
+            eventADMIN();
+            break;
+            default:
+            cout << "\n[PLEASE ENTER A VALID INPUT]\n";
+        }
+    }
+    }
+
+    void refundADMIN() {
+        double refund;
+        cout << "\n[REFUND REQUESTS]";
+        if (refundREQ.empty() && refundREA.empty()) {
+            cout << "\n[NO REFUND REQUESTS]\n";
+            return;
+        } for (size_t i = 0; i < refundREQ.size(); i++) {
+            cout << "\nREFUND REQUEST: " << refundREQ[i] << endl;
+            cout << "\nREASON FOR REFUND: " << refundREA[i] << endl;
+            cout << "\nEnter amount of refund: ";
+            cin >> refund;
+            cin.ignore();
+            for (auto &user : usersD) {
+                if (user.name == REGISname) {
+                    user.balance += refund;
+                    SAVEDFILES();
+                    cout << "\n[REFUND SUCCESSFUL]\n";
+                    return;
+                }
+            } cout << "\n[ERROR]\n";
+        }
     }
 
     void SAVEDFILES() {
