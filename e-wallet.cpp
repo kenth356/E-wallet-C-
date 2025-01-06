@@ -3,6 +3,7 @@
 #include <string>
 #include <algorithm>
 #include <fstream>
+#include <sstream>
 using namespace std;
 
 struct userDC {
@@ -86,7 +87,9 @@ return 0;
     cout << "\nENTER ACADEMIC LEVEL/STRAND/COURSE: ";
     getline(cin, newUSERS.std_info);
     newUSERS.balance = 0.0;
-    newUSERS.tuitionFee = 0.0;
+    newUSERS.tuitionFee = {};
+    newUSERS.misceFee = {};
+    newUSERS.eventPart = {};
     usersD.push_back(newUSERS);
     SAVEDFILES();
     cout << "\n[REGISTRATION SUCCESSFUL]\n";
@@ -311,7 +314,7 @@ return 0;
     void tuitionFEE() {
         for (auto &user : usersD) {
             if (user.name == REGISname) {
-                if (user.tuitionFee == 0) {
+                if (user.tuitionFee.empty()) {
                     cout << "\n[THERE ARE NO TUITION DUE]\n";
                     return;
                 }
@@ -325,7 +328,7 @@ return 0;
                 cin.ignore();
                 if (user.balance >= tuitionPYT) {
                     user.balance -= tuitionPYT;
-                    user.tuitionFee -= tuitionPYT;
+                    user.tuitionFee.erase(remove(user.tuitionFee.begin(), user.tuitionFee.end(), tuitionPYT), user.tuitionFee.end());
                     SAVEDFILES();
                     cout << "\n[PAYMENT SUCCESSFUL]";
                     cout << "\nAMOUNT PAID: " << tuitionPYT << " PHP";
@@ -341,7 +344,7 @@ return 0;
     void misceFEE() {
         for (auto &user : usersD) {
             if (user.name == REGISname) {
-                if (user.misceFee == 0) {
+                if (user.misceFee.empty()) {
                     cout << "\n[THERE ARE NO MISCELLANEOUS DUE]\n";
                     return;
                 }
@@ -355,7 +358,7 @@ return 0;
                 cin.ignore();
                 if (user.balance >= miscePYT) {
                     user.balance -= miscePYT;
-                    user.misceFee -= miscePYT;
+                    user.misceFee.erase(remove(user.misceFee.begin(), user.misceFee.end(), miscePYT), user.misceFee.end());
                     SAVEDFILES();
                     cout << "\n[PAYMENT SUCCESSFUL]";
                     cout << "\nAMOUNT PAID: " << miscePYT << " PHP";
@@ -371,7 +374,7 @@ return 0;
     void eventPART() {
         for (auto &user : usersD) {
             if (user.name == REGISname) {
-                if (user.eventPart == 0) {
+                if (user.eventPart.empty()) {
                     cout << "\n[THERE ARE NO EVENTS DUE]\n";
                     return;
                 }
@@ -385,7 +388,7 @@ return 0;
                 cin.ignore();
                 if (user.balance >= eventPYT) {
                     user.balance -= eventPYT;
-                    user.eventPart -= eventPYT;
+                    user.eventPart.erase(remove(user.eventPart.begin(), user.eventPart.end(), eventPYT), user.eventPart.end());
                     SAVEDFILES();
                     cout << "\n[PAYMENT SUCCESSFUL]";
                     cout << "\nAMOUNT PAID: " << eventPYT << " PHP";
@@ -454,8 +457,8 @@ return 0;
             cout << "\n[NO REFUND REQUESTS]\n";
             return;
         } for (size_t i = 0; i < refundREQ.size(); i++) {
-            cout << "\nREFUND REQUEST: " << refundREQ[i] << endl;
-            cout << "\nREASON FOR REFUND: " << refundREA[i] << endl;
+            cout << "\nREFUND REQUEST: " << refundREQ[i];
+            cout << "\nREASON FOR REFUND: " << refundREA[i];
             cout << "\nEnter amount of refund: ";
             cin >> refund;
             cin.ignore();
@@ -532,12 +535,14 @@ return 0;
             getline(cin, answer);
             if (!(answer == "yes")) {
                 break;
-            }
-        } while (true);
-        cout << "\nGo Back?";
-        cout << "\nenter: ";
+            } cout << "\nGo Back?";
+            cout << "\nenter: ";
         string answer2;
         getline(cin, answer2);
+        if (answer2 == "yes") {
+            break;
+        }
+        } while (true);
     }
 
     string adRESPO(string inquiry) {
@@ -553,15 +558,66 @@ return 0;
     void SAVEDFILES() {
         ofstream file("users.txt");
         for (const auto &user : usersD) {
-            file << "NAME: " << user.name << "\n" << "PASSWORD: " << user.pass << "\n" << "EMAIL: "
-            << user.email << "\n" << "ACADEMIC LEVEL/STRAND/COURSE: " << user.std_info << "\n" << "BALANCE: " << user.balance << "\n" << user.tuitionFee << "\n" << user.misceFee << "\n" << user.eventPart << "\n";
+            file << "NAME: " << user.name << "\n"
+            << "PASSWORD: " << user.pass << "\n"
+            << "EMAIL: " << user.email << "\n"
+            << "ACADEMIC LEVEL/STRAND/COURSE: " << user.std_info << "\n"
+            << "BALANCE: " << user.balance << "\n";
+            file << "TUITION FEE: ";
+            for (double fee : user.tuitionFee) {
+                file << fee << " ";
+            } file << "\n";
+            
+            file << "MISCELLANEOUS FEE: ";
+            for (double fee : user.misceFee) {
+                file << fee << " ";
+            } file << "\n";
+
+            file << "EVENTS DUE: ";
+            for (double fee : user.eventPart) {
+                file << fee << " ";
+            } file << "\n";
+
         } file.close();
     }
 
     void LOADFILES() {
         ifstream file("users.txt");
         userDC user;
-        while (file >> user.name >> user.pass >> user.email >> user.balance >> user.std_info >> user.tuitionFee >> user.misceFee >> user.eventPart) {
-            usersD.push_back(user);
-        } file.close();
+        string line;
+        while (getline(file, line)) {
+            if (line.find("NAME: ") != string::npos) {
+                user.name = line.substr(6);
+            } if (line.find("PASSWORD: ") != string::npos) {
+                user.pass = line.substr(10);
+            } if (line.find("EMAIL: ") != string::npos) {
+                user.email = line.substr(7);
+            } if (line.find("ACADEMIC LEVEL/STRAND/COURSE: ") != string::npos) {
+                user.std_info = line.substr(30);
+            } if (line.find("BALANCE: ") != string::npos) {
+                user.balance = stod(line.substr(9));
+            } if (line.find("TUITION FEE: ") != string::npos) {
+                stringstream ss(line.substr(14));
+                double fee;
+                while (ss >> fee) {
+                    user.tuitionFee.push_back(fee);
+                }
+            } if (line.find("MISCELLANEOUS FEE: ") !=string::npos) {
+                stringstream ss(line.substr(11));
+                double fee;
+                while (ss >> fee) {
+                    user.misceFee.push_back(fee);
+                }
+            } if (line.find("EVENTS DUE: ") != string::npos) {
+                stringstream ss(line.substr(12));
+                double fee;
+                while (ss >> fee) {
+                    user.eventPart.push_back(fee);
+                }
+            } if (line.empty() || file.peek() == EOF) {
+                usersD.push_back(user);
+                user = userDC();
+            }
+        }
+        file.close();
     }
