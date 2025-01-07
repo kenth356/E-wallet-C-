@@ -13,11 +13,15 @@ double balance;
 vector<double> tuitionFee;
 vector<double> misceFee;
 vector<double> eventPart;
+vector<string> notifications;
+};
+
+struct refundREQS {
+    string name, refundREQ, refundREA;
 };
 
 vector<userDC> usersD;
-vector<string> refundREQ;
-vector<string> refundREA;
+vector<refundREQS> refundREQUESTS;
 string REGISname;
 double adminCODE = 2706;
 
@@ -30,7 +34,6 @@ void Exit();
 void roles();
 void AdminMENU();
 void AdminLOGIN();
-void roleSELECT();
 void EWallet();
 void cashIN();
 void sendMONE();
@@ -146,6 +149,8 @@ return 0;
             return;
             default:
             cout << "\n[PLEASE ENTER A VALID INPUT]\n";
+        } if (REGISname == "") {
+            break;
         }
     }
     }
@@ -184,6 +189,8 @@ return 0;
             break;
             default:
             cout << "\n[PLEASE ENTER A VALID INPUT]\n";
+        } if (REGISname == "") {
+            break;
         }
     }
     }
@@ -226,9 +233,10 @@ return 0;
             return;
         } sender->balance -= amountSEND;
         recipient->balance += amountSEND;
+        sender->notifications.push_back("You sent " + to_string(amountSEND) + " PHP to " + recipientNAME);
+        recipient->notifications.push_back(REGISname + " sent you " + to_string(amountSEND) + " PHP");
         SAVEDFILES();
         cout << "\n[TRANSFER SUCCESSFUL]\n";
-        return;
     }
 
     void payREQS() {
@@ -240,6 +248,7 @@ return 0;
         cout << "\n1. Tuition Fee";
         cout << "\n2. Miscellaneous Fee/s";
         cout << "\n3. Event Participation";
+        cout << "\n4. Go Back";
         cout << "\nEnter: ";
         cin >> answer;
         cin.ignore();
@@ -253,6 +262,8 @@ return 0;
             case 3:
             eventPART();
             break;
+            case 4:
+            return;
             default:
             cout << "\n[PLEASE ENTER A VALID INPUT]\n";
         }
@@ -262,7 +273,7 @@ return 0;
     void curBA() {
         for (const auto &user : usersD) {
             if (user.name == REGISname) {
-                cout << "\nYOUR CURRENT BALANCE: " << user.balance << " PHP";
+                cout << "\nYOUR CURRENT BALANCE: " << user.balance << " PHP\n";
                 return;
             }
         } cout << "\n[ERROR]\nUSER NOT FOUND";
@@ -275,6 +286,7 @@ return 0;
         cout << "\n1. Ask for Refunds";
         cout << "\n2. Inquire";
         cout << "\n3. Logout";
+        cout << "\n4. Go Back";
         cout << "\nEnter: ";
         cin >> choice;
         cin.ignore();
@@ -287,8 +299,10 @@ return 0;
             break;
             case 3:
             cout << "\n[LOGGING OUT]\n";
-            roles();
-            break;
+            REGISname = "";
+            return;
+            case 4:
+            return;
             default:
             cout << "\n[PLEASE ENTER A VALID INPUT]\n";
         }
@@ -296,18 +310,30 @@ return 0;
     }
 
     void noTIF() {
-        
+        cout << "\n[NOTIFICATIONS]";
+        for (auto &user : usersD) {
+            if (user.name == REGISname) {
+                if (user.notifications.empty()) {
+                    cout << "\nNo new notifications\n";
+                    return;
+                } for (size_t i = 0; i < user.notifications.size(); ++i) {
+                    cout << "[" << (i+1) << "] " << user.notifications[i];
+                } user.notifications.clear();
+                SAVEDFILES();
+                return;
+            }
+        } cout << "\n[ERROR USER NOT FOUND]";
     }
 
     void reFUND() {
-        string REQ, REA;
+        refundREQS newREQS;
+        newREQS.name = REGISname;
         cout << "\n[REQUEST A REFUND]";
         cout << "\nType of Refund: ";
-        getline(cin, REQ);
-        refundREQ.push_back(REQ);
+        getline(cin, newREQS.refundREQ);
         cout << "\nReason for refund: ";
-        getline(cin, REA);
-        refundREA.push_back(REA);
+        getline(cin, newREQS.refundREA);
+        refundREQUESTS.push_back(newREQS);
         cout << "\n[REQUEST FOR REFUND SUCCESS]\nWAIT FOR FURTHER NOTICE\n";
     }
 
@@ -442,8 +468,8 @@ return 0;
             eventADMIN();
             break;
             case 5:
-            roles();
-            break;
+            cout << "\n[LOGGING OUT]\n";
+            return;
             default:
             cout << "\n[PLEASE ENTER A VALID INPUT]\n";
         }
@@ -451,26 +477,30 @@ return 0;
     }
 
     void refundADMIN() {
-        double refund;
+        double refundAMT;
         cout << "\n[REFUND REQUESTS]";
-        if (refundREQ.empty() && refundREA.empty()) {
-            cout << "\n[NO REFUND REQUESTS]\n";
+        if (refundREQUESTS.empty()) {
+            cout << "\n--NO REFUND REQUESTS--\n";
             return;
-        } for (size_t i = 0; i < refundREQ.size(); i++) {
-            cout << "\nREFUND REQUEST: " << refundREQ[i];
-            cout << "\nREASON FOR REFUND: " << refundREA[i];
+        } for (size_t i = 0; i < refundREQUESTS.size(); i++) {
+        const auto &refund = refundREQUESTS[i];
+            cout << "\nREQUEST #" << (i + 1);
+            cout << "\nNAME: " << refund.name;
+            cout << "\nREFUND REQUEST: " << refund.refundREQ[i];
+            cout << "\nREASON FOR REFUND: " << refund.refundREA[i];
             cout << "\nEnter amount of refund: ";
-            cin >> refund;
+            cin >> refundAMT;
             cin.ignore();
             for (auto &user : usersD) {
-                if (user.name == REGISname) {
-                    user.balance += refund;
+                if (user.name == refund.name) {
+                    user.balance += refundAMT;
+                    user.notifications.push_back("Your refund request for " + to_string(refundAMT) + " PHP has been processed");
                     SAVEDFILES();
                     cout << "\n[REFUND SUCCESSFUL]\n";
-                    return;
+                    break;
                 }
             } cout << "\n[ERROR]\n";
-        }
+        } refundREQUESTS.clear();
     }
 
     void tuitionADMIN() {
@@ -482,6 +512,7 @@ return 0;
         for (auto &user : usersD) {
             if (user.name == REGISname) {
                 user.tuitionFee.push_back(tuitionDUE);
+                user.notifications.push_back("Tuition fee of " + to_string(tuitionDUE) + " PHP has been assigned to your account.");
                 SAVEDFILES();
                 cout << "\nUPDATED TUITION DUE FOR: " << user.name << "\n";
                 return;
@@ -498,6 +529,7 @@ return 0;
         for (auto &user : usersD) {
             if (user.name == REGISname) {
                 user.misceFee.push_back(misceDUE);
+                user.notifications.push_back("Miscellaneous fee of " + to_string(misceDUE) + " PHP has been assigned to your account.");
                 SAVEDFILES();
                 cout << "\nUPDATED MISCELLANEOUS DUE FOR: " << user.name << "\n";
                 return;
@@ -514,6 +546,7 @@ return 0;
         for (auto &user : usersD) {
             if (user.name == REGISname) {
                 user.eventPart.push_back(eventDUE);
+                user.notifications.push_back("Event fee of " + to_string(eventDUE) + " PHP has been assigned to your account.");
                 SAVEDFILES();
                 cout << "\nUPDATED EVENT DUE FOR: " << user.name << "\n";
                 return;
@@ -535,13 +568,7 @@ return 0;
             getline(cin, answer);
             if (!(answer == "yes")) {
                 break;
-            } cout << "\nGo Back?";
-            cout << "\nenter: ";
-        string answer2;
-        getline(cin, answer2);
-        if (answer2 == "yes") {
-            break;
-        }
+            }
         } while (true);
     }
 
@@ -572,7 +599,7 @@ return 0;
             for (double fee : user.misceFee) {
                 file << fee << " ";
             } file << "\n";
-
+            
             file << "EVENTS DUE: ";
             for (double fee : user.eventPart) {
                 file << fee << " ";
